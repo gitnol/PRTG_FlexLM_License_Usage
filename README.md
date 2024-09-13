@@ -64,11 +64,12 @@ The script dynamically creates a PRTG sensor channel for each unique license fou
      Invoke-Command -ScriptBlock $scriptblock -ComputerName $Servername -Credential $cred
      ```
 8. **Bonus / Additional Export**
-   - If you aditionally want to export the license usage to a specific folder, just uncomment the following two lines in the script
-   - ```	
-   $filename = "C:\LicenseUsage\lmgrd_log_analyze_" + (get-date).ToString("yyyyMMdd_HHmmss") + ".csv"
-   $result | Export-Csv -LiteralPath $filename -NoClobber -Encoding UTF8 -Delimiter ";"
-   ```
+   - If you aditionally want to export the license usage to a specific folder, just uncomment the following two lines in the script.
+      ```	
+      $filename = "C:\LicenseUsage\lmgrd_log_analyze_" + (get-date).ToString("yyyyMMdd_HHmmss") + ".csv"
+      $result | Export-Csv -LiteralPath $filename -NoClobber -Encoding UTF8 -Delimiter ";"
+      ```
+   - (Keep in mind, that the lmgrd logfile is being resetted on every server restart / service restart and that the logfile is being overwritten by the service.)
 
 8. **License**
   - This script is provided as-is, with no warranty or support. Feel free to modify it to suit your environment.
