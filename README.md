@@ -20,11 +20,14 @@ This script is designed to be used as a PRTG custom sensor to monitor FlexLM lic
    - Select **"EXE/Script Advanced"** as the sensor type.
    - Point the sensor to the script file and provide the required parameter (`Servername`) in the sensor settings.
      - Parameters =  ```-Servername %device```
+     - ![image](https://github.com/user-attachments/assets/1705502e-8daf-4ac2-b597-105836d3d75c)
+       
      - Security Context = ```Use Windows credentials of parent device```  (make sure to specify the credentials, which have the rights to access the target server via Powershell, try ```Enter-PSSession -ComputerName $myServer -Credentials (Get-Credential)```
      - Scanning interval = ```10 Minutes``` (should be sufficient. The script may run for some seconds depending on the size of the ```C:\Program Files (x86)\SOLIDWORKS Corp\SolidNetWork License Manager\lmgrd.log```
+     - ![image](https://github.com/user-attachments/assets/fa5359e5-44a4-45f7-96fa-03b49140867e)
 
 4. **Script Parameters**  
-   - `Servername`: The name of the FlexLM license server that the script should connect to.
+   - `Servername`: The name of the FlexLM license server that the script should connect to. Keep in mind to use %device within PRTG.
 
    
 5. **Channels**  
@@ -54,5 +57,12 @@ Each <result> tag represents a license type and the corresponding number of chec
   - Access to the FlexLM license manager's log files
   - PRTG with permissions to run PowerShell scripts on the probe
 
-7. **License**
+7. **Problems**
+   - On any problems try to execute the script in a powershell session and add the credential parameter.
+     ```
+     $cred = Get-Credential
+     Invoke-Command -ScriptBlock $scriptblock -ComputerName $Servername -Credential $cred
+     ```
+
+8. **License**
   - This script is provided as-is, with no warranty or support. Feel free to modify it to suit your environment.
