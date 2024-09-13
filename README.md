@@ -33,24 +33,24 @@ This script is designed to be used as a PRTG custom sensor to monitor FlexLM lic
 5. **Channels**  
 The script dynamically creates a PRTG sensor channel for each unique license found in the log file. For each channel, the number of licenses currently checked out will be reported.
 
-## Example Output of the script for PRTG
-```
-<prtg>
-<result>
-  <channel>ProductA</channel>
-  <value>5</value>
-</result>
-<result>
-  <channel>ProductB</channel>
-  <value>2</value>
-</result>
-<result>
-  <channel>ProductC</channel>
-  <value>0</value>
-</result>
-</prtg>
-```
-Each <result> tag represents a license type and the corresponding number of checked-out licenses.
+   ## Example Output of the script for PRTG
+   ```
+   <prtg>
+   <result>
+     <channel>ProductA</channel>
+     <value>5</value>
+   </result>
+   <result>
+     <channel>ProductB</channel>
+     <value>2</value>
+   </result>
+   <result>
+     <channel>ProductC</channel>
+     <value>0</value>
+   </result>
+   </prtg>
+   ```
+   Each <result> tag represents a license type and the corresponding number of checked-out licenses.
 
 6. **Requirements**
   - PowerShell 5.1 or later
@@ -63,6 +63,12 @@ Each <result> tag represents a license type and the corresponding number of chec
      $cred = Get-Credential
      Invoke-Command -ScriptBlock $scriptblock -ComputerName $Servername -Credential $cred
      ```
+8. **Bonus / Additional Export**
+   - If you aditionally want to export the license usage to a specific folder, just uncomment the following two lines in the script
+   - ```	
+   $filename = "C:\LicenseUsage\lmgrd_log_analyze_" + (get-date).ToString("yyyyMMdd_HHmmss") + ".csv"
+   $result | Export-Csv -LiteralPath $filename -NoClobber -Encoding UTF8 -Delimiter ";"
+   ```
 
 8. **License**
   - This script is provided as-is, with no warranty or support. Feel free to modify it to suit your environment.
