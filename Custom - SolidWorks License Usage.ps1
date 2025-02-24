@@ -29,27 +29,28 @@ $scriptblock = {
             }
         }
     }
-
     function Get-FlexLmServices {
-        $FlexLMBaseKey = 'HKLM:\SOFTWARE\WOW6432Node\FLEXlm License Manager'
+        $FlexLM64BitKey = 'HKLM:\SOFTWARE\FLEXlm License Manager'
+        $FlexLM32BitKey = 'HKLM:\SOFTWARE\WOW6432Node\FLEXlm License Manager'
         
-        if (Test-Path $FlexLMBaseKey) {
-            Get-ChildItem $FlexLMBaseKey | ForEach-Object { 
-                $RegProperties = Get-ItemProperty $_.PSPath
-                $WMIService = Get-CimInstance -ClassName Win32_Service | Where-Object { $_.PathName -like '*lmgrd*' }
-
-                [PSCustomObject]@{
-                    ServiceName    = $_.Name
-                    LicensePath    = $RegProperties.License
-                    LicenseExists  = Test-Path $RegProperties.License
-                    LogFilePath    = $RegProperties.lmgrd_log_file
-                    ServicePath    = $RegProperties.lmgrd
-                    Service        = {if ($WMIService.Name) { Get-Service -Name $WMIService.Name }}
-                    ServiceProcess = {if ($WMIService.ProcessId) { Get-Process -Id $WMIService.ProcessId }}
-                }
-            }
-        } else {
+        # Prefer 64 Bit License Manager over 32 bit license Manager
+        $FlexLMBaseKey = if (Test-Path $FlexLM64BitKey) { $FlexLM64BitKey } elseif (Test-Path $FlexLM32BitKey) { $FlexLM32BitKey } else {
             Write-Error "No FLEXlm License Manager Found"
+            return
+        }
+        
+        Get-ChildItem $FlexLMBaseKey | ForEach-Object { 
+            $RegProperties = Get-ItemProperty $_.PSPath
+            $WMIService = Get-CimInstance -ClassName Win32_Service | Where-Object { $_.PathName -like '*lmgrd*' }
+            [PSCustomObject]@{
+                ServiceName    = $_.Name
+                LicensePath    = $RegProperties.License
+                LicenseExists  = Test-Path $RegProperties.License
+                LogFilePath    = $RegProperties.lmgrd_log_file
+                ServicePath    = $RegProperties.lmgrd
+                Service        = {if ($WMIService.Name) { Get-Service -Name $WMIService.Name }}
+                ServiceProcess = {if ($WMIService.ProcessId) { Get-Process -Id $WMIService.ProcessId }}
+            }
         }
     }
 
